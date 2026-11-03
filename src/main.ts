@@ -5,6 +5,7 @@ import { AppModule } from './app.module.js';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Thiết lập global prefix cho API
   app.setGlobalPrefix('api');
   app.enableCors();
 
@@ -20,14 +21,14 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
 
-  // Sửa từ 'api/docs' thành 'docs' để nó tự gộp với global prefix 'api' thành /api/docs
-  SwaggerModule.setup('docs', app, document);
+  // Đổi lại setup thành 'api/docs' để ép đường dẫn cố định là /api/docs bất kể global prefix
+  SwaggerModule.setup('api/docs', app, document);
 
   const port = process.env.PORT || 3000;
   await app.listen(port, '0.0.0.0');
 
   console.log(`Server running on port ${port}`);
-  console.log(`Swagger: http://localhost:${port}/docs`);
+  console.log(`Swagger: http://localhost:${port}/api/docs`);
 }
 
 bootstrap();
