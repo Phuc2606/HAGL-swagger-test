@@ -8,10 +8,6 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
   app.enableCors();
 
-  const serverUrl = process.env.RENDER_EXTERNAL_URL
-    ? process.env.RENDER_EXTERNAL_URL.replace(/\/$/, '')
-    : `http://localhost:${process.env.PORT || 3000}`;
-
   const config = new DocumentBuilder()
     .setTitle('HAGL Club API')
     .setDescription(
@@ -19,18 +15,19 @@ async function bootstrap() {
     )
     .setVersion('1.0')
     .addTag('Teams', 'HAGL club and match information')
-    .addServer(serverUrl, 'Server')
+    .addServer(process.env.RENDER_EXTERNAL_URL || `http://localhost:${process.env.PORT || 3000}`, 'Server')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
 
-  SwaggerModule.setup('', app, document);
+  // Sửa từ 'api/docs' thành 'docs' để nó tự gộp với global prefix 'api' thành /api/docs
+  SwaggerModule.setup('docs', app, document);
 
   const port = process.env.PORT || 3000;
   await app.listen(port, '0.0.0.0');
 
   console.log(`Server running on port ${port}`);
-  console.log(`Swagger: ${serverUrl}/api/docs`);
+  console.log(`Swagger: http://localhost:${port}/docs`);
 }
 
 bootstrap();
